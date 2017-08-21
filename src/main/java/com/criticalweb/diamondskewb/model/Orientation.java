@@ -5,7 +5,7 @@ package com.criticalweb.diamondskewb.model;
  */
 public enum Orientation {
 
-    UP("Up"), DOWN("Down"), LEFT("Left"), RIGHT("Right"), FRONT("Front"), BACK("Back");
+    UP("Up"), DOWN("Down"), WEST("West"), EAST("East"), NORTH("North"), SOUTH("South");
 
     private String name;
 
