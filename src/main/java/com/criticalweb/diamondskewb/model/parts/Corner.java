@@ -1,6 +1,7 @@
 package com.criticalweb.diamondskewb.model.parts;
 
 import com.criticalweb.diamondskewb.model.Color;
+import com.criticalweb.diamondskewb.model.Direction;
 import com.criticalweb.diamondskewb.model.Orientation;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 /**
  * Created by ReZz on 2017-08-15.
  */
-public class Corner {
+public class Corner extends AbstractRotatablePart {
 
     private Map<Orientation, Color> colors = new HashMap<>();
 
@@ -19,4 +20,8 @@ public class Corner {
         colors.put(o3, c3);
     }
 
+    @Override
+    public void rotate(final Direction d, final CornerSwap c) {
+        // actually do something here
+    }
 }
