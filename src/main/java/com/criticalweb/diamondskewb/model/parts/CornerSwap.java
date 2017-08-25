@@ -1,8 +1,8 @@
 package com.criticalweb.diamondskewb.model.parts;
 
+import com.criticalweb.diamondskewb.model.DirectionAwareList;
 import com.criticalweb.diamondskewb.model.Orientation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class CornerSwap {
 
-	private List<Integer> corners = new ArrayList<>();
-	private List<Orientation> primaryColors = new ArrayList<>();
-	private List<Orientation> secondaryColors = new ArrayList<>();
+	private DirectionAwareList<Integer> corners = new DirectionAwareList<>();
+	private DirectionAwareList<Orientation> primaryColors = new DirectionAwareList<>();
+	private DirectionAwareList<Orientation> secondaryColors = new DirectionAwareList<>();
 
 	public CornerSwap(final List<Integer> corners, final List<Orientation> primaryColors, final List<Orientation> secondaryColors) {
 		setCorners(corners);
@@ -20,27 +20,27 @@ public class CornerSwap {
 		setSecondaryColors(secondaryColors);
 	}
 
-	public List<Integer> getCorners() {
+	public DirectionAwareList<Integer> getCorners() {
 		return corners;
 	}
 
 	public void setCorners(List<Integer> corners) {
-		this.corners = corners;
+		this.corners.addAll(corners);
 	}
 
-	public List<Orientation> getPrimaryColors() {
+	public DirectionAwareList<Orientation> getPrimaryColors() {
 		return primaryColors;
 	}
 
 	public void setPrimaryColors(List<Orientation> primaryColors) {
-		this.primaryColors = primaryColors;
+		this.primaryColors.addAll(primaryColors);
 	}
 
-	public List<Orientation> getSecondaryColors() {
+	public DirectionAwareList<Orientation> getSecondaryColors() {
 		return secondaryColors;
 	}
 
 	public void setSecondaryColors(List<Orientation> secondaryColors) {
-		this.secondaryColors = secondaryColors;
+		this.secondaryColors.addAll(secondaryColors);
 	}
 }

@@ -140,21 +140,27 @@ public class DiamondSkewb {
 	}
 
 	public void rotate(final short position, final Direction direction) {
-		if (Direction.CW.equals(direction)) {
-			rotateCW(position);
-		} else if (Direction.CCW.equals(direction)) {
-			rotateCCW(position);
-		} else {
-			throw(new IllegalArgumentException("Direction must be one of Direction.CW or Direction.CCW"));
-		}
-	}
 
-	private void rotateCW(final short position) {
+		// TODO: need to make the swapping behaviour generic, keep repeating it here and in Corner.java
+
 		final CornerSwap focus = swaps.get(position);
-		final Iterator<Integer> iter = focus.getCorners().iterator();
 
-		// the last element is the first source
-		Integer source = focus.getCorners().get(focus.getCorners().size()-1);
+		// rotate the focus corner
+		corners.get(position).rotate(Direction.CW, focus);
+
+		// move the corners around the focus
+
+		final DirectionAwareIterator<Integer> iter = focus.getCorners().iterator(direction);
+
+		Integer source;
+		if (Direction.CW.equals(direction)) {
+			// the last element is the first source
+			source = focus.getCorners().get(focus.getCorners().size()-1);
+		} else {
+			// the first element is the first source
+			source = focus.getCorners().get(0);
+		}
+
 		// set the first source corner into the buffer
 		Corner cornerBuffer = corners.get(source);
 
@@ -172,10 +178,32 @@ public class DiamondSkewb {
 			cornerBuffer = temp;
 		}
 
-	}
+		// iterate over the swap's primary colors to move the faces around
 
-	private void rotateCCW(final short position) {
+		DirectionAwareList<Orientation> primaryColors = focus.getPrimaryColors();
+		final DirectionAwareIterator<Orientation> faceIter = primaryColors.iterator(direction);
 
+		Face faceBuffer;
+		if (Direction.CW.equals(direction)) {
+			// the last element is the first source
+			faceBuffer = faces.get(primaryColors.get(primaryColors.size()-1));
+		} else {
+			// the first element is the first source
+			faceBuffer = faces.get(0);
+		}
+
+		while (faceIter.hasNext()) {
+			Orientation target = faceIter.next();
+
+			// store the face in the target position in the temp buffer
+			Face temp = faces.get(target);
+
+			// move the source face from the buffer to the target position
+			faces.put(target, faceBuffer);
+
+			// move the target face from the temp buffer to the face buffer (for next iteration)
+			faceBuffer = temp;
+		}
 	}
 
 	private void initSwaps() {
