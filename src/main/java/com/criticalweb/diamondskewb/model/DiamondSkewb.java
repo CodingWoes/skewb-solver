@@ -20,16 +20,16 @@ public class DiamondSkewb {
      * <p>
      * We'll use only the top corners (C0-C3), as the bottom corners mirror their top counterparts.
      * <p>
-     * (C0) F / F' -> Front corner clockwise / Front corner anticlockwise
-     * (C1) L / L' -> Left corner clockwise / Left corner anticlockwise
-     * (C2) R / R' -> Right corner clockwise / Right corner anticlockwise
-	 * (C3) B / B' -> Back corner clockwise / Back corner anticlockwise
+     * USE - (C0) F / F' -> Front corner clockwise / Front corner anticlockwise
+     * USW - (C1) L / L' -> Left corner clockwise / Left corner anticlockwise
+     * UNE - (C2) R / R' -> Right corner clockwise / Right corner anticlockwise
+	 * UNW - (C3) B / B' -> Back corner clockwise / Back corner anticlockwise
      * <p>
 	 * [bottom corners]
-	 * C4 front
-	 * C5 left
-	 * C6 right
-	 * C7 back
+	 * DSE - C4 front
+	 * DSW - C5 left
+	 * DNE - C6 right
+	 * DNW - C7 back
 	 * <p>
 	 * (F0) Up
 	 * (F1) South
@@ -42,8 +42,8 @@ public class DiamondSkewb {
      * 2 operations in one direction are the same as doing 1 operation in the opposing direction.
      */
 
-    List<Corner> corners = new ArrayList<>();
-	Map<Orientation, Face> faces = new HashMap<>();
+    SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
+	SwappableMap<Orientation, Face> faces = new SwappableMap<>();
 
 	/**
 	 * [CW] //// CCW would go the opposite direction in circular orientation loops
@@ -98,18 +98,7 @@ public class DiamondSkewb {
 
 	 */
 
-	private List<CornerSwap> swaps = new ArrayList<>();
-
-	private int[][] cw = new int[][]{
-			{1,2,4},
-			{3,0,5},
-			{0,3,6},
-			{2,1,7},
-			{0,6,5},
-			{1,4,7},
-			{2,7,4},
-			{3,5,6}
-	};
+	private Map<Orientation, CornerSwap> swaps = new HashMap<>();
 
 	/**
 	 * This default constructor should initialize a solved Skewb.
@@ -121,14 +110,14 @@ public class DiamondSkewb {
 		initSwaps();
 
 		// corners
-		corners.add(new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
-		corners.add(new Corner(UP, Color.RED, SOUTH, Color.GREEN, WEST, Color.WHITE));
-		corners.add(new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.add(new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
-		corners.add(new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, EAST, Color.YELLOW));
-		corners.add(new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, WEST, Color.WHITE));
-		corners.add(new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.add(new Corner(DOWN, Color.ORANGE, NORTH, Color.BLUE, WEST, Color.WHITE));
+		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
+		corners.put(USW, new Corner(UP, Color.RED, SOUTH, Color.GREEN, WEST, Color.WHITE));
+		corners.put(UNE, new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(UNW, new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
+		corners.put(DSE, new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, EAST, Color.YELLOW));
+		corners.put(DSW, new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, WEST, Color.WHITE));
+		corners.put(DNE, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(DNW, new Corner(DOWN, Color.ORANGE, NORTH, Color.BLUE, WEST, Color.WHITE));
 
 		// faces
 		faces.put(UP, new Face(Color.YELLOW));
@@ -149,72 +138,28 @@ public class DiamondSkewb {
 		corners.get(position).rotate(Direction.CW, focus);
 
 		// move the corners around the focus
+		List<Corner> c = corners.swap(direction, focus.getCorners());
 
-		final DirectionAwareIterator<Integer> iter = focus.getCorners().iterator(direction);
-
-		Integer source;
-		if (Direction.CW.equals(direction)) {
-			// the last element is the first source
-			source = focus.getCorners().get(focus.getCorners().size()-1);
-		} else {
-			// the first element is the first source
-			source = focus.getCorners().get(0);
+		// rotate swapped corners
+		for (int i=0; i<c.size(); i++) {
+			c.get(i).rotate(direction, focus);
 		}
 
-		// set the first source corner into the buffer
-		Corner cornerBuffer = corners.get(source);
+		// move the faces around the focus
+		faces.swap(direction, focus.getPrimaryColors());
 
-		while (iter.hasNext()) {
-			// rotate the corner's colors while we're at it
-			cornerBuffer.rotate(Direction.CW, focus);
-
-			Integer target = iter.next();
-			// store the corner in the target position in the temp buffer
-			Corner temp=corners.get(target);
-			// move the source corner from the buffer to the target position
-			corners.set(target, cornerBuffer);
-
-			// move the target corner from the temp buffer to the corner buffer (for next iteration)
-			cornerBuffer = temp;
-		}
-
-		// iterate over the swap's primary colors to move the faces around
-
-		DirectionAwareList<Orientation> primaryColors = focus.getPrimaryColors();
-		final DirectionAwareIterator<Orientation> faceIter = primaryColors.iterator(direction);
-
-		Face faceBuffer;
-		if (Direction.CW.equals(direction)) {
-			// the last element is the first source
-			faceBuffer = faces.get(primaryColors.get(primaryColors.size()-1));
-		} else {
-			// the first element is the first source
-			faceBuffer = faces.get(0);
-		}
-
-		while (faceIter.hasNext()) {
-			Orientation target = faceIter.next();
-
-			// store the face in the target position in the temp buffer
-			Face temp = faces.get(target);
-
-			// move the source face from the buffer to the target position
-			faces.put(target, faceBuffer);
-
-			// move the target face from the temp buffer to the face buffer (for next iteration)
-			faceBuffer = temp;
-		}
 	}
 
 	private void initSwaps() {
-		swaps.add(new CornerSwap(Arrays.asList(1,2,4), Arrays.asList(UP, EAST, SOUTH), Arrays.asList(DOWN, WEST, NORTH)));
-		swaps.add(new CornerSwap(Arrays.asList(3,0,5), Arrays.asList(UP, SOUTH, WEST), Arrays.asList(DOWN, NORTH, EAST)));
-		swaps.add(new CornerSwap(Arrays.asList(0,3,6), Arrays.asList(UP, NORTH, EAST), Arrays.asList(DOWN, SOUTH, WEST)));
-		swaps.add(new CornerSwap(Arrays.asList(2,1,7), Arrays.asList(UP, WEST, NORTH), Arrays.asList(DOWN, EAST, SOUTH)));
+		swaps.put(USE, new CornerSwap(Arrays.asList(USW, UNE, DSW), Arrays.asList(UP, EAST, SOUTH), Arrays.asList(DOWN, WEST, NORTH)));
+		swaps.put(USW, new CornerSwap(Arrays.asList(UNW, USE, DSW), Arrays.asList(UP, SOUTH, WEST), Arrays.asList(DOWN, NORTH, EAST)));
+		swaps.put(UNE, new CornerSwap(Arrays.asList(USE, UNW, DNE), Arrays.asList(UP, NORTH, EAST), Arrays.asList(DOWN, SOUTH, WEST)));
+		swaps.put(UNW, new CornerSwap(Arrays.asList(UNE, USW, DNW), Arrays.asList(UP, WEST, NORTH), Arrays.asList(DOWN, EAST, SOUTH)));
 	}
 
+
 	public String toString() {
-		// implement a method that will return a string representation of the state, for unique representation and cache lookup
+		// TODO: implement a method that will return a string representation of the state, for unique representation and cache lookup
 		return null;
 	}
 

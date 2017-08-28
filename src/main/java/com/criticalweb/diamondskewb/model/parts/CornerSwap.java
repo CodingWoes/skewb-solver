@@ -10,21 +10,21 @@ import java.util.List;
  */
 public class CornerSwap {
 
-	private DirectionAwareList<Integer> corners = new DirectionAwareList<>();
+	private DirectionAwareList<Orientation> corners = new DirectionAwareList<>();
 	private DirectionAwareList<Orientation> primaryColors = new DirectionAwareList<>();
 	private DirectionAwareList<Orientation> secondaryColors = new DirectionAwareList<>();
 
-	public CornerSwap(final List<Integer> corners, final List<Orientation> primaryColors, final List<Orientation> secondaryColors) {
+	public CornerSwap(final List<Orientation> corners, final List<Orientation> primaryColors, final List<Orientation> secondaryColors) {
 		setCorners(corners);
 		setPrimaryColors(primaryColors);
 		setSecondaryColors(secondaryColors);
 	}
 
-	public DirectionAwareList<Integer> getCorners() {
+	public DirectionAwareList<Orientation> getCorners() {
 		return corners;
 	}
 
-	public void setCorners(List<Integer> corners) {
+	public void setCorners(List<Orientation> corners) {
 		this.corners.addAll(corners);
 	}
 
