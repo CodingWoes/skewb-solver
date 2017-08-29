@@ -20,6 +20,10 @@ public class Corner {
         colors.put(o3, c3);
     }
 
+    public Color getColor(final Orientation o) {
+        return colors.get(o);
+    }
+
     public void rotate(final Direction d, final CornerSwap c) {
 
         // loop over primary colors

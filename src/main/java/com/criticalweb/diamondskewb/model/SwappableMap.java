@@ -25,7 +25,7 @@ public class SwappableMap<K, V> extends HashMap<K,V> {
 			buffer = this.get(list.get(list.size()-1));
 		} else {
 			// the first element is the first source
-			buffer = this.get(0);
+			buffer = this.get(list.get(0));
 		}
 
 		while (iter.hasNext()) {

@@ -13,7 +13,7 @@ public class DirectionAwareIterator<E> implements Iterator<E> {
 
 	DirectionAwareIterator(final DirectionAwareList<E> list, final Direction direction) {
 		this.direction = direction;
-		this.itr = list.listIterator();
+		this.itr = list.listIterator(Direction.CCW.equals(direction) ? list.size() : 0);
 	}
 
 	@Override

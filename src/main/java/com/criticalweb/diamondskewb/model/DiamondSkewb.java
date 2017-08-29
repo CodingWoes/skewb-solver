@@ -109,6 +109,24 @@ public class DiamondSkewb {
 
 		initSwaps();
 
+		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
+		corners.put(USW, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, WEST, Color.GREEN));
+		corners.put(UNE, new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(UNW, new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
+		corners.put(DSE, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, EAST, Color.BLUE));
+		corners.put(DSW, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, WEST, Color.GREEN));
+		corners.put(DNE, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(DNW, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, WEST, Color.GREEN));
+
+		// faces
+		faces.put(UP, new Face(Color.YELLOW));
+		faces.put(SOUTH, new Face(Color.ORANGE));
+		faces.put(EAST, new Face(Color.BLUE));
+		faces.put(WEST, new Face(Color.GREEN));
+		faces.put(NORTH, new Face(Color.RED));
+		faces.put(DOWN, new Face(Color.WHITE));
+
+		/*
 		// corners
 		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
 		corners.put(USW, new Corner(UP, Color.RED, SOUTH, Color.GREEN, WEST, Color.WHITE));
@@ -126,23 +144,22 @@ public class DiamondSkewb {
 		faces.put(WEST, new Face(Color.WHITE));
 		faces.put(NORTH, new Face(Color.RED));
 		faces.put(DOWN, new Face(Color.ORANGE));
+		 */
 	}
 
-	public void rotate(final short position, final Direction direction) {
-
-		// TODO: need to make the swapping behaviour generic, keep repeating it here and in Corner.java
+	public void rotate(final Orientation position, final Direction direction) {
 
 		final CornerSwap focus = swaps.get(position);
 
 		// rotate the focus corner
-		corners.get(position).rotate(Direction.CW, focus);
+		corners.get(position).rotate(direction, focus);
 
 		// move the corners around the focus
 		List<Corner> c = corners.swap(direction, focus.getCorners());
 
 		// rotate swapped corners
-		for (int i=0; i<c.size(); i++) {
-			c.get(i).rotate(direction, focus);
+		for (Corner cc : c) {
+			cc.rotate(direction, focus);
 		}
 
 		// move the faces around the focus
@@ -158,9 +175,43 @@ public class DiamondSkewb {
 	}
 
 
+	/**
+	 * Returns a string representing the cube in this format:
+	 * C#C
+	 * #C#
+	 * C#C
+	 * @return
+	 */
 	public String toString() {
-		// TODO: implement a method that will return a string representation of the state, for unique representation and cache lookup
-		return null;
+		final Map<Orientation, List> f = new LinkedHashMap<>();
+
+		f.put(UP, Arrays.asList(corners.get(UNW), corners.get(UNE), corners.get(USW), corners.get(USE)));
+		f.put(SOUTH, Arrays.asList(corners.get(USW), corners.get(USE), corners.get(DSW), corners.get(DSE)));
+		f.put(WEST, Arrays.asList(corners.get(UNW), corners.get(USW), corners.get(DNW), corners.get(DSW)));
+		f.put(EAST, Arrays.asList(corners.get(USE), corners.get(UNE), corners.get(DSE), corners.get(DNE)));
+		f.put(NORTH, Arrays.asList(corners.get(UNE), corners.get(UNW), corners.get(DNE), corners.get(DNW)));
+		f.put(DOWN, Arrays.asList(corners.get(DNW), corners.get(DNE), corners.get(DSW), corners.get(DSE)));
+
+		final StringBuilder sb = new StringBuilder();
+
+		for (Map.Entry<Orientation, List> e : f.entrySet()) {
+			final Orientation k = e.getKey();
+			final List<Corner> v = e.getValue();
+			if (sb.length() != 0) {
+				sb.append("|");
+			}
+			sb.append(v.get(0).getColor(k));
+			sb.append("#");
+			sb.append(v.get(1).getColor(k));
+			sb.append("#");
+			sb.append(faces.get(k).getColor());
+			sb.append("#");
+			sb.append(v.get(2).getColor(k));
+			sb.append("#");
+			sb.append(v.get(3).getColor(k));
+		}
+
+		return sb.toString();
 	}
 
 }
