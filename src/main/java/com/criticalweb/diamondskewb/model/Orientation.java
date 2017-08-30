@@ -5,12 +5,17 @@ package com.criticalweb.diamondskewb.model;
  */
 public enum Orientation {
 
-    UP("Up"), DOWN("Down"), WEST("West"), EAST("East"), NORTH("North"), SOUTH("South"), USE("Up-South-East"), USW("Up-South-West"), UNE("Up-North-East"), UNW("Up-North-West"), DSE("Down-South-East"), DSW("Down-South-West"), DNE("Down-North-East"), DNW("Down-North-West");
+    UP("U", "Up"), DOWN("D", "Down"), WEST("W", "West"), EAST("E", "East"), NORTH("N", "North"), SOUTH("S", "South"), USE("USE", "Up-South-East"), USW("USW", "Up-South-West"), UNE("UNE", "Up-North-East"), UNW("UNW", "Up-North-West"), DSE("DSE", "Down-South-East"), DSW("DSW", "Down-South-West"), DNE("DNE", "Down-North-East"), DNW("DNW", "Down-North-West");
 
+    private String label;
     private String name;
 
-    Orientation(final String name) {
+    Orientation(final String label, final String name) {
+        this.label=label;
         this.name=name;
     }
 
+    public String getLabel() {
+        return label;
+    }
 }

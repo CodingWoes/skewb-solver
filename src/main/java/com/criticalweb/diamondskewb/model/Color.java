@@ -5,12 +5,16 @@ package com.criticalweb.diamondskewb.model;
  */
 public enum Color {
 
-    BLUE("Blue"), GREEN("Green"), YELLOW("Yellow"), WHITE("White"), RED("Red"), ORANGE("Orange");
+    BLUE('B', "Blue"), GREEN('G', "Green"), YELLOW('Y', "Yellow"), WHITE('W', "White"), RED('R', "Red"), ORANGE('O', "Orange");
 
+    private char label;
     private String name;
 
-    Color(final String name) {
+    Color(final char label, final String name) {
+        this.label=label;
         this.name=name;
     }
+
+    public char getLabel() { return this.label; }
 
 }

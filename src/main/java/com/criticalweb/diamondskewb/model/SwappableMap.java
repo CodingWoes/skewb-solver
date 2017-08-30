@@ -1,6 +1,7 @@
 package com.criticalweb.diamondskewb.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +46,10 @@ public class SwappableMap<K, V> extends HashMap<K,V> {
 
 		return affectedValues;
 
+	}
+
+	public String toString() {
+		return Arrays.toString(this.entrySet().toArray());
 	}
 
 }

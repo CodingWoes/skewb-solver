@@ -1,0 +1,79 @@
+Four different operations. See Skewb Square sketchup file
+
+Each operation can be done clockwise or anticlockwise around the selected corner.
+
+We'll use only the top corners (C0-C3), as the bottom corners mirror their top counterparts.
+
+USE - (C0) F / F' -> Front corner clockwise / Front corner anticlockwise
+USW - (C1) L / L' -> Left corner clockwise / Left corner anticlockwise
+UNE - (C2) R / R' -> Right corner clockwise / Right corner anticlockwise
+UNW - (C3) B / B' -> Back corner clockwise / Back corner anticlockwise
+
+[bottom corners]
+DSE - C4 front
+DSW - C5 left
+DNE - C6 right
+DNW - C7 back
+
+(F0) Up
+(F1) South
+(F2) East
+(F3) West
+(F4) North
+(F5) Down
+3 operations in the same direction returns the cube to its original state.
+
+2 operations in one direction are the same as doing 1 operation in the opposing direction.
+
+
+SWAPS
+
+[CW] //// CCW would go the opposite direction in circular orientation loops
+C0 : C1 > C2 > C4 [circular loop]
+ Up>East
+ Down>West
+ North>Down
+ South>Up
+ East>South
+ West>North
+
+[this is one of those circular orientation loops]
+Up>East>South>Up
+Down>West>North>Down
+
+CornerSwap
+    .corners[1,2,4]
+    .colors[[Up,East,South],[Down,West,North]]
+
+C1 : C3 > C0 > C5
+ Up>South
+ Down>North
+ North>East
+ South>West
+ East>Down
+ West>Up
+
+Up>South>West>Up
+Down>North>East>Down
+
+C2 : C0 > C3 > C6
+ Up>North
+ Down>South
+ North>East
+ South>West
+ East>Up
+ West>Down
+
+Up>North>East>Up
+Down>South>West>Down
+
+C3 : C2 > C1 > C7
+ Up>West
+ Down>East
+ North>Up
+ South>Down
+ East>South
+ West>North
+
+Up>West>North>Up
+Down>East>South>Down
