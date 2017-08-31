@@ -19,6 +19,10 @@ public class Corner {
         return colors.get(o);
     }
 
+    public void setColor(final Orientation o, final Color c) {
+        colors.put(o, c);
+    }
+
     public void rotate(final Direction d, final CornerSwap c) {
 
         // loop over primary colors

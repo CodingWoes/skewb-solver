@@ -15,7 +15,7 @@ public class Skewb {
 
 	private final SkewbPrinter printer = new SkewbPrinter();
 
-    SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
+	SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
 	SwappableMap<Orientation, Face> faces = new SwappableMap<>();
 
 	private Map<Orientation, CornerSwap> swaps = new HashMap<>();
@@ -67,9 +67,17 @@ public class Skewb {
 		 */
 	}
 
+	public Skewb(final String state) {
+		this();
+		printer.parse(state);
+	}
+
 	public void rotate(final Orientation position, final Direction direction) {
 
 		final CornerSwap focus = swaps.get(position);
+		if (focus == null) {
+			throw new IllegalArgumentException("position must be one of : 'UNW', 'UNE', 'USW', 'USE'.");
+		}
 
 		// rotate the focus corner
 		corners.get(position).rotate(direction, focus);
@@ -116,7 +124,7 @@ public class Skewb {
 
 		final Map<Orientation, List> outputOrder = new LinkedHashMap<>();
 
-		public SkewbPrinter() {
+		SkewbPrinter() {
 			outputOrder.put(UP, Arrays.asList(UNW, UNE, USW, USE));
 			outputOrder.put(SOUTH, Arrays.asList(USW, USE, DSW, DSE));
 			outputOrder.put(WEST, Arrays.asList(UNW, USW, DNW, DSW));
@@ -125,7 +133,7 @@ public class Skewb {
 			outputOrder.put(DOWN, Arrays.asList(DSW, DSE, DNW, DNE));
 		}
 
-		public String print() {
+		String print() {
 			final StringBuilder sb = new StringBuilder();
 
 			for (Map.Entry<Orientation, List> e : outputOrder.entrySet()) {
@@ -147,6 +155,45 @@ public class Skewb {
 			}
 
 			return sb.toString();
+		}
+
+		void parse(final String state) {
+
+			String[] _faces = state.split("\\|");
+
+			// split over each face
+			for (String f : _faces) {
+
+				String[] _parts = f.split(":");
+
+				// split face into orientation and colors
+				if (_parts.length != 2) {
+					throw new IllegalArgumentException("Error parsing input string: " + f);
+				}
+				String o = _parts[0];
+				String c = _parts[1];
+
+				// orientation from string
+				Orientation _currentO = Orientation.findByLabel(o);
+
+				// split colors into array of colors
+				String[] _colors = c.split("#");
+
+				if (_colors.length != 5) {
+					throw new IllegalArgumentException("Error parsing input string: " + c);
+				}
+
+				faces.get(_currentO).setColor(Color.findByLabel(_colors[2].charAt(0)));
+
+				List<Orientation> _corners = outputOrder.get(_currentO);
+
+				corners.get(_corners.get(0)).setColor(_currentO, Color.findByLabel(_colors[0].charAt(0)));
+				corners.get(_corners.get(1)).setColor(_currentO, Color.findByLabel(_colors[1].charAt(0)));
+				corners.get(_corners.get(2)).setColor(_currentO, Color.findByLabel(_colors[3].charAt(0)));
+				corners.get(_corners.get(3)).setColor(_currentO, Color.findByLabel(_colors[4].charAt(0)));
+
+			}
+
 		}
 
 	}

@@ -1,5 +1,8 @@
 package com.criticalweb.skewb.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ReZz on 2017-08-15.
  */
@@ -15,7 +18,19 @@ public enum Orientation {
         this.name=name;
     }
 
+    private static final Map<String, Orientation> map;
+    static {
+        map = new HashMap<>();
+        for (Orientation o : Orientation.values()) {
+            map.put(o.getLabel(), o);
+        }
+    }
+
     public String getLabel() {
         return label;
+    }
+
+    public static Orientation findByLabel(final String l) {
+        return map.get(l);
     }
 }

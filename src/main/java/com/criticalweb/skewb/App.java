@@ -20,5 +20,7 @@ public class App {
 
 		System.out.println(skewb);
 
+		final SkewbSolver solver = new SkewbSolver(skewb);
+
 	}
 }

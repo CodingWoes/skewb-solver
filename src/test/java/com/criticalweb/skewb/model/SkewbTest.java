@@ -98,4 +98,23 @@ public class SkewbTest {
 
 	}
 
+	@Test
+	public void initWithString() {
+
+		final String expected = "U:R#R#R#R#Y|S:B#O#O#O#O|W:Y#Y#Y#Y#G|E:B#W#B#B#B|N:G#G#G#R#G|D:W#W#W#O#W";
+
+		final Skewb skewb = new Skewb(expected);
+
+		Assert.assertEquals("Output not as expected after setup with string.", expected, skewb.toString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void invalidRotateCalls() {
+
+		final Skewb skewb = new Skewb();
+
+		skewb.rotate(Orientation.NORTH, Direction.CW);
+
+	}
+
 }
