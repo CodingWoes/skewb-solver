@@ -1,4 +1,4 @@
-package com.criticalweb.diamondskewb.model;
+package com.criticalweb.skewb.model;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,11 +6,11 @@ import org.junit.Test;
 /**
  * Created by i840108 on 2017-08-30.
  */
-public class DiamondSkewbTest {
+public class SkewbTest {
 
 	@Test
 	public void solvedStateNoOp() {
-		final DiamondSkewb skewb = new DiamondSkewb();
+		final Skewb skewb = new Skewb();
 
 		final String expected = "U:Y#Y#Y#Y#Y|S:O#O#O#O#O|W:G#G#G#G#G|E:B#B#B#B#B|N:R#R#R#R#R|D:W#W#W#W#W";
 
@@ -19,7 +19,7 @@ public class DiamondSkewbTest {
 
 	@Test
 	public void singleCWRotation() {
-		final DiamondSkewb skewb = new DiamondSkewb();
+		final Skewb skewb = new Skewb();
 
 		// initial
 		final String expectedBeforeOp = "U:Y#Y#Y#Y#Y|S:O#O#O#O#O|W:G#G#G#G#G|E:B#B#B#B#B|N:R#R#R#R#R|D:W#W#W#W#W";
@@ -65,7 +65,7 @@ public class DiamondSkewbTest {
 
 	@Test
 	public void singleCCWRotation() {
-		final DiamondSkewb skewb = new DiamondSkewb();
+		final Skewb skewb = new Skewb();
 
 		final String expectedBeforeOp = "U:Y#Y#Y#Y#Y|S:O#O#O#O#O|W:G#G#G#G#G|E:B#B#B#B#B|N:R#R#R#R#R|D:W#W#W#W#W";
 
@@ -81,7 +81,7 @@ public class DiamondSkewbTest {
 
 	@Test
 	public void multipleCWRotation() {
-		final DiamondSkewb skewb = new DiamondSkewb();
+		final Skewb skewb = new Skewb();
 
 		final String expectedBeforeOp = "U:Y#Y#Y#Y#Y|S:O#O#O#O#O|W:G#G#G#G#G|E:B#B#B#B#B|N:R#R#R#R#R|D:W#W#W#W#W";
 

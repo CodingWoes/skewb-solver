@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.criticalweb</groupId>
-	<artifactId>diamond-skewb</artifactId>
+	<artifactId>skewb</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>diamond-skewb</name>
-	<description>Demo project for Spring Boot</description>
+	<name>skewb</name>
+	<description>A little Skewb project</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

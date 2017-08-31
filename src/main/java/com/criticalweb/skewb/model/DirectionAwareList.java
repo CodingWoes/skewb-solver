@@ -1,4 +1,4 @@
-package com.criticalweb.diamondskewb.model;
+package com.criticalweb.skewb.model;
 
 import java.util.ArrayList;
 

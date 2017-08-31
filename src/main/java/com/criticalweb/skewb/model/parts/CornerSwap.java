@@ -1,7 +1,7 @@
-package com.criticalweb.diamondskewb.model.parts;
+package com.criticalweb.skewb.model.parts;
 
-import com.criticalweb.diamondskewb.model.DirectionAwareList;
-import com.criticalweb.diamondskewb.model.Orientation;
+import com.criticalweb.skewb.model.DirectionAwareList;
+import com.criticalweb.skewb.model.Orientation;
 
 import java.util.List;
 

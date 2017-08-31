@@ -1,20 +1,19 @@
-package com.criticalweb.diamondskewb.model;
+package com.criticalweb.skewb.model;
 
-import com.criticalweb.diamondskewb.model.parts.Corner;
-import com.criticalweb.diamondskewb.model.parts.CornerSwap;
-import com.criticalweb.diamondskewb.model.parts.Face;
+import com.criticalweb.skewb.model.parts.Corner;
+import com.criticalweb.skewb.model.parts.CornerSwap;
+import com.criticalweb.skewb.model.parts.Face;
 
 import java.util.*;
 
-import static com.criticalweb.diamondskewb.model.Orientation.*;
+import static com.criticalweb.skewb.model.Orientation.*;
 
 /**
  * Created by ReZz on 2017-08-11.
  */
-// TODO: THIS IS TECHNICALLY FOR A SQUARE SKEWB
-public class DiamondSkewb {
+public class Skewb {
 
-	private final DiamondSkewbPrinter printer = new DiamondSkewbPrinter();
+	private final SkewbPrinter printer = new SkewbPrinter();
 
     SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
 	SwappableMap<Orientation, Face> faces = new SwappableMap<>();
@@ -26,7 +25,7 @@ public class DiamondSkewb {
 	 * <p>
 	 * Currently, it returns a skewb rotated once clockwise around C2 (the right corner).
 	 */
-	public DiamondSkewb() {
+	public Skewb() {
 
 		initSwaps();
 
@@ -113,11 +112,11 @@ public class DiamondSkewb {
 	 *
 	 * @return
 	 */
-	private class DiamondSkewbPrinter {
+	private class SkewbPrinter {
 
 		final Map<Orientation, List> outputOrder = new LinkedHashMap<>();
 
-		public DiamondSkewbPrinter() {
+		public SkewbPrinter() {
 			outputOrder.put(UP, Arrays.asList(UNW, UNE, USW, USE));
 			outputOrder.put(SOUTH, Arrays.asList(USW, USE, DSW, DSE));
 			outputOrder.put(WEST, Arrays.asList(UNW, USW, DNW, DSW));

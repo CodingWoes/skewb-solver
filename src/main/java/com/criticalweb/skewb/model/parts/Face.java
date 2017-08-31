@@ -1,6 +1,6 @@
-package com.criticalweb.diamondskewb.model.parts;
+package com.criticalweb.skewb.model.parts;
 
-import com.criticalweb.diamondskewb.model.Color;
+import com.criticalweb.skewb.model.Color;
 
 /**
  * Created by i840108 on 2017-08-22.

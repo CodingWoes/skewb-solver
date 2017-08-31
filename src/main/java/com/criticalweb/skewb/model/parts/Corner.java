@@ -1,11 +1,6 @@
-package com.criticalweb.diamondskewb.model.parts;
+package com.criticalweb.skewb.model.parts;
 
-import com.criticalweb.diamondskewb.model.*;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.criticalweb.skewb.model.*;
 
 /**
  * Created by ReZz on 2017-08-15.

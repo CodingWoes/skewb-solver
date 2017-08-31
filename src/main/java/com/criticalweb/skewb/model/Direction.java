@@ -1,4 +1,4 @@
-package com.criticalweb.diamondskewb.model;
+package com.criticalweb.skewb.model;
 
 /**
  * Created by i840108 on 2017-08-22.
