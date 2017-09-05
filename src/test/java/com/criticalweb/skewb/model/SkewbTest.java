@@ -117,4 +117,19 @@ public class SkewbTest {
 
 	}
 
+	@Test
+	public void solved() {
+		final Skewb skewb = new Skewb();
+
+		Assert.assertTrue("Initial skewb should be solved!", skewb.isSolved());
+
+		skewb.rotate(Orientation.UNW, Direction.CW);
+
+		Assert.assertFalse("Skewb shouldn't be solved after rotating corner.", skewb.isSolved());
+
+		skewb.rotate(Orientation.UNW, Direction.CCW);
+
+		Assert.assertTrue("Skewb should be solved after reverting first rotation.", skewb.isSolved());
+	}
+
 }

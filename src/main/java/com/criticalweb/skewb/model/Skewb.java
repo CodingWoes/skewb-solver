@@ -3,6 +3,7 @@ package com.criticalweb.skewb.model;
 import com.criticalweb.skewb.model.parts.Corner;
 import com.criticalweb.skewb.model.parts.CornerSwap;
 import com.criticalweb.skewb.model.parts.Face;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -15,60 +16,27 @@ public class Skewb {
 
 	private final SkewbPrinter printer = new SkewbPrinter();
 
-	SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
-	SwappableMap<Orientation, Face> faces = new SwappableMap<>();
+	private SwappableMap<Orientation, Corner> corners = new SwappableMap<>();
+	private SwappableMap<Orientation, Face> faces = new SwappableMap<>();
+
+	private Map<Orientation, List> structure = new LinkedHashMap<>();
 
 	private Map<Orientation, CornerSwap> swaps = new HashMap<>();
 
+	private boolean dirty;
+	private boolean solved;
+
+	private static Logger LOG = Logger.getLogger(Skewb.class);
+
 	/**
-	 * This default constructor should initialize a solved Skewb.
-	 * <p>
-	 * Currently, it returns a skewb rotated once clockwise around C2 (the right corner).
+	 * This default constructor initializes a solved Skewb.
 	 */
 	public Skewb() {
-
-		initSwaps();
-
-		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
-		corners.put(USW, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, WEST, Color.GREEN));
-		corners.put(UNE, new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.put(UNW, new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
-		corners.put(DSE, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, EAST, Color.BLUE));
-		corners.put(DSW, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, WEST, Color.GREEN));
-		corners.put(DNE, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.put(DNW, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, WEST, Color.GREEN));
-
-		// faces
-		faces.put(UP, new Face(Color.YELLOW));
-		faces.put(SOUTH, new Face(Color.ORANGE));
-		faces.put(EAST, new Face(Color.BLUE));
-		faces.put(WEST, new Face(Color.GREEN));
-		faces.put(NORTH, new Face(Color.RED));
-		faces.put(DOWN, new Face(Color.WHITE));
-
-		/*
-		// corners
-		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
-		corners.put(USW, new Corner(UP, Color.RED, SOUTH, Color.GREEN, WEST, Color.WHITE));
-		corners.put(UNE, new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.put(UNW, new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
-		corners.put(DSE, new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, EAST, Color.YELLOW));
-		corners.put(DSW, new Corner(DOWN, Color.ORANGE, SOUTH, Color.GREEN, WEST, Color.WHITE));
-		corners.put(DNE, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
-		corners.put(DNW, new Corner(DOWN, Color.ORANGE, NORTH, Color.BLUE, WEST, Color.WHITE));
-
-		// faces
-		faces.put(UP, new Face(Color.YELLOW));
-		faces.put(SOUTH, new Face(Color.GREEN));
-		faces.put(EAST, new Face(Color.BLUE));
-		faces.put(WEST, new Face(Color.WHITE));
-		faces.put(NORTH, new Face(Color.RED));
-		faces.put(DOWN, new Face(Color.ORANGE));
-		 */
+		initSkewb();
 	}
 
 	public Skewb(final String state) {
-		this();
+		initSkewb();
 		printer.parse(state);
 	}
 
@@ -93,17 +61,89 @@ public class Skewb {
 		// move the faces around the focus
 		faces.swap(direction, focus.getPrimaryColors());
 
+		dirty = true;
+
 	}
 
-	private void initSwaps() {
-		swaps.put(USE, new CornerSwap(Arrays.asList(USW, UNE, DSE), Arrays.asList(UP, EAST, SOUTH), Arrays.asList(DOWN, WEST, NORTH)));
-		swaps.put(USW, new CornerSwap(Arrays.asList(UNW, USE, DSW), Arrays.asList(UP, SOUTH, WEST), Arrays.asList(DOWN, NORTH, EAST)));
-		swaps.put(UNE, new CornerSwap(Arrays.asList(USE, UNW, DNE), Arrays.asList(UP, NORTH, EAST), Arrays.asList(DOWN, SOUTH, WEST)));
-		swaps.put(UNW, new CornerSwap(Arrays.asList(UNE, USW, DNW), Arrays.asList(UP, WEST, NORTH), Arrays.asList(DOWN, EAST, SOUTH)));
+	public boolean isSolved() {
+		if (!dirty) {
+			return solved;
+		}
+
+		final long start = System.currentTimeMillis();
+
+//		LOG.debug("Skewb dirty! testing state...");
+//		LOG.debug("Current skewb output: " + printer.print());
+
+		solved = true;
+		for (Map.Entry<Orientation, List> entry : structure.entrySet()) {
+			final Orientation face = entry.getKey();
+
+			final Color color = faces.get(face).getColor();
+
+			// LOG.debug("Testing face: " + face + " | (color " + color + ")");
+
+			for (Orientation c : ((List<Orientation>) entry.getValue())) {
+				if (!color.equals(corners.get(c).getColor(face))) {
+//					LOG.debug("Skewb not solved! Corner at " + c + " has color " + corners.get(c).getColor(face));
+					solved = false;
+					break;
+				}
+			}
+			if (!solved) {
+				break;
+			}
+		}
+
+//		LOG.debug("Skewb solved? (" + solved + ") - time taken: " + (System.currentTimeMillis() - start) + "ms");
+
+		dirty = false;
+		return solved;
 	}
 
 	public String toString() {
 		return printer.print();
+	}
+
+	private void initSkewb() {
+
+		// init the skewb in a solved state
+
+		// corners
+		corners.put(USE, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, EAST, Color.BLUE));
+		corners.put(USW, new Corner(UP, Color.YELLOW, SOUTH, Color.ORANGE, WEST, Color.GREEN));
+		corners.put(UNE, new Corner(UP, Color.YELLOW, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(UNW, new Corner(UP, Color.YELLOW, NORTH, Color.RED, WEST, Color.GREEN));
+		corners.put(DSE, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, EAST, Color.BLUE));
+		corners.put(DSW, new Corner(DOWN, Color.WHITE, SOUTH, Color.ORANGE, WEST, Color.GREEN));
+		corners.put(DNE, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, EAST, Color.BLUE));
+		corners.put(DNW, new Corner(DOWN, Color.WHITE, NORTH, Color.RED, WEST, Color.GREEN));
+
+		// faces
+		faces.put(UP, new Face(Color.YELLOW));
+		faces.put(SOUTH, new Face(Color.ORANGE));
+		faces.put(EAST, new Face(Color.BLUE));
+		faces.put(WEST, new Face(Color.GREEN));
+		faces.put(NORTH, new Face(Color.RED));
+		faces.put(DOWN, new Face(Color.WHITE));
+
+		// structure (each face with its corresponding corners)
+		structure.put(UP, Arrays.asList(UNW, UNE, USW, USE));
+		structure.put(SOUTH, Arrays.asList(USW, USE, DSW, DSE));
+		structure.put(WEST, Arrays.asList(UNW, USW, DNW, DSW));
+		structure.put(EAST, Arrays.asList(USE, UNE, DSE, DNE));
+		structure.put(NORTH, Arrays.asList(UNE, UNW, DNE, DNW));
+		structure.put(DOWN, Arrays.asList(DSW, DSE, DNW, DNE));
+
+		// swap sequences
+		swaps.put(USE, new CornerSwap(Arrays.asList(USW, UNE, DSE), Arrays.asList(UP, EAST, SOUTH), Arrays.asList(DOWN, WEST, NORTH)));
+		swaps.put(USW, new CornerSwap(Arrays.asList(UNW, USE, DSW), Arrays.asList(UP, SOUTH, WEST), Arrays.asList(DOWN, NORTH, EAST)));
+		swaps.put(UNE, new CornerSwap(Arrays.asList(USE, UNW, DNE), Arrays.asList(UP, NORTH, EAST), Arrays.asList(DOWN, SOUTH, WEST)));
+		swaps.put(UNW, new CornerSwap(Arrays.asList(UNE, USW, DNW), Arrays.asList(UP, WEST, NORTH), Arrays.asList(DOWN, EAST, SOUTH)));
+
+		dirty = false;
+		solved = true;
+
 	}
 
 	/**
@@ -122,21 +162,10 @@ public class Skewb {
 	 */
 	private class SkewbPrinter {
 
-		final Map<Orientation, List> outputOrder = new LinkedHashMap<>();
-
-		SkewbPrinter() {
-			outputOrder.put(UP, Arrays.asList(UNW, UNE, USW, USE));
-			outputOrder.put(SOUTH, Arrays.asList(USW, USE, DSW, DSE));
-			outputOrder.put(WEST, Arrays.asList(UNW, USW, DNW, DSW));
-			outputOrder.put(EAST, Arrays.asList(USE, UNE, DSE, DNE));
-			outputOrder.put(NORTH, Arrays.asList(UNE, UNW, DNE, DNW));
-			outputOrder.put(DOWN, Arrays.asList(DSW, DSE, DNW, DNE));
-		}
-
 		String print() {
 			final StringBuilder sb = new StringBuilder();
 
-			for (Map.Entry<Orientation, List> e : outputOrder.entrySet()) {
+			for (Map.Entry<Orientation, List> e : structure.entrySet()) {
 				final Orientation k = e.getKey();
 				final List<Orientation> v = e.getValue();
 				if (sb.length() != 0) {
@@ -185,7 +214,7 @@ public class Skewb {
 
 				faces.get(_currentO).setColor(Color.findByLabel(_colors[2].charAt(0)));
 
-				List<Orientation> _corners = outputOrder.get(_currentO);
+				List<Orientation> _corners = structure.get(_currentO);
 
 				corners.get(_corners.get(0)).setColor(_currentO, Color.findByLabel(_colors[0].charAt(0)));
 				corners.get(_corners.get(1)).setColor(_currentO, Color.findByLabel(_colors[1].charAt(0)));
@@ -194,6 +223,7 @@ public class Skewb {
 
 			}
 
+			dirty = true;
 		}
 
 	}
