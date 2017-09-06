@@ -1,9 +1,10 @@
 package com.criticalweb.skewb;
 
-import com.criticalweb.skewb.model.Skewb;
 import com.criticalweb.skewb.model.Direction;
 import com.criticalweb.skewb.model.Orientation;
-import org.apache.log4j.Logger;
+import com.criticalweb.skewb.model.Skewb;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -12,9 +13,12 @@ import java.util.List;
  */
 public class App {
 
-	private static final Logger LOG = Logger.getLogger(App.class);
+	private static final Logger LOG = LogManager.getLogger(App.class);
 
 	public static void main(String[] args) {
+
+		LOG.error("Testing an error!");
+		LOG.info("Testing info...");
 
 		final Skewb skewb = new Skewb();
 
@@ -28,19 +32,19 @@ public class App {
 
 		solver.solve();
 
-		final String skewb2State = "U:Y#O#W#Y#O|S:O#G#Y#Y#R|W:B#G#O#B#R|E:W#W#B#G#W|N:B#O#G#B#R|D:G#W#R#Y#R";
-		final Skewb skewb2 = new Skewb(skewb2State);
-
-		LOG.debug(skewb2);
-
-		final SkewbSolver solver2 = new SkewbSolver(skewb2);
-
-		List<Operation> operations = solver2.solve();
-		LOG.debug("Starting state: " + skewb2State);
-		LOG.debug(operations);
-		for (Operation o : operations) {
-			LOG.debug(o);
-		}
+//		final String skewb2State = "U:Y#O#W#Y#O|S:O#G#Y#Y#R|W:B#G#O#B#R|E:W#W#B#G#W|N:B#O#G#B#R|D:G#W#R#Y#R";
+//		final Skewb skewb2 = new Skewb(skewb2State);
+//
+//		LOG.debug(skewb2);
+//
+//		final SkewbSolver solver2 = new SkewbSolver(skewb2);
+//
+//		List<Operation> operations = solver2.solve();
+//		LOG.debug("Starting state: " + skewb2State);
+//		LOG.debug(operations);
+//		for (Operation o : operations) {
+//			LOG.debug(o);
+//		}
 
 	}
 }

@@ -3,7 +3,8 @@ package com.criticalweb.skewb;
 import com.criticalweb.skewb.model.Direction;
 import com.criticalweb.skewb.model.Orientation;
 import com.criticalweb.skewb.model.Skewb;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ public class SkewbSolver {
 
 	private Skewb skewb;
 
-	private static final Logger LOG = Logger.getLogger(SkewbSolver.class);
+	private static final Logger LOG = LogManager.getLogger(SkewbSolver.class);
 
 	private final List<Orientation> axes = new ArrayList<>();
 	private final List<Direction> directions = new ArrayList<>();
@@ -59,6 +60,7 @@ public class SkewbSolver {
 			if (result != null) {
 				LOG.debug("Found " + cache.size() + " different states.");
 				solved = true;
+				LOG.debug("Process complete. Time taken: " + (System.currentTimeMillis() - start) + "ms");
 				return cache.get(result);
 			}
 
@@ -70,8 +72,6 @@ public class SkewbSolver {
 				break;
 			}
 		}
-
-		LOG.debug("Process complete. Time taken: " + (System.currentTimeMillis() - start) + "ms");
 
 		return null;
 
