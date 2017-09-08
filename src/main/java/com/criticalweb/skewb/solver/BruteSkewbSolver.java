@@ -1,5 +1,6 @@
-package com.criticalweb.skewb.model;
+package com.criticalweb.skewb.solver;
 
+import com.criticalweb.skewb.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,46 +9,45 @@ import java.util.*;
 /**
  * Created by i840108 on 2017-08-31.
  */
-public class SkewbSolver {
+public class BruteSkewbSolver implements SkewbSolver {
 
-	private Skewb skewb;
-
-	private static final Logger LOG = LogManager.getLogger(SkewbSolver.class);
+	private static final Logger LOG = LogManager.getLogger(BruteSkewbSolver.class);
 
 	private final List<Orientation> axes = new ArrayList<>();
 	private final List<Direction> directions = new ArrayList<>();
 
-	private Map<String, List> cache = new HashMap<>();
+	private Map<String, List> cache;
 
-	private Queue<String> queue = new LinkedList<>();
+	private Queue<String> queue;
 
-	private String originalState;
-
-	private boolean solved;
-
-	public SkewbSolver(final Skewb skewb) {
-		this.skewb = skewb;
-		originalState = skewb.toString();
+	public BruteSkewbSolver() {
 
 		axes.addAll(Arrays.asList(Orientation.UNW, Orientation.UNE, Orientation.USW, Orientation.USE));
 		directions.addAll(Arrays.asList(Direction.CW, Direction.CCW));
 	}
 
-	public Solution solve() {
+	public Solution solve(final Skewb skewb) {
+
+		// reset cache and queue
+		cache = new HashMap<>();
+		queue = new LinkedList<>();
+
+		final String originalState = skewb.toString();
+
 		if (skewb.isSolved()) {
 			LOG.warn("Skewb already solved!");
 			throw new IllegalArgumentException("Skewb already solved.");
 		}
 
-		if (LOG.isInfoEnabled()) {
-			LOG.info("Beginning solve of skewb: " + skewb);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Beginning solve of skewb: " + skewb);
 		}
 
 		long start = System.currentTimeMillis();
 
-		solved = false;
+		boolean solved = false;
 
-		int counter=0;
+		int counter = 0;
 
 		// store the initial state in the cache, along with an empty op-list
 		cache.put(originalState, new ArrayList<Operation>());
@@ -62,19 +62,21 @@ public class SkewbSolver {
 			if (result != null) {
 				solved = true;
 				long timeTaken = System.currentTimeMillis() - start;
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Found " + cache.size() + " different states.");
-					LOG.debug("Process complete. Time taken: " + timeTaken + "ms");
+				if (LOG.isTraceEnabled()) {
+					LOG.trace("Found " + cache.size() + " different states.");
+					LOG.trace("Process complete. Time taken: " + timeTaken + "ms");
 				}
 				final Solution solution = new Solution();
+				solution.setStartingSkewb(skewb);
 				solution.setOperations(cache.get(result));
 				solution.setTimeTaken(timeTaken);
+				logSolution(solution);
 				return solution;
 			}
 
 			counter++;
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Finished pass " + counter + " (time so far: " + (System.currentTimeMillis() - start) + "ms)");
+			if (LOG.isTraceEnabled()) {
+				LOG.trace("Finished pass " + counter + " (time so far: " + (System.currentTimeMillis() - start) + "ms)");
 			}
 
 			// TODO: this should be removed eventually
@@ -91,8 +93,8 @@ public class SkewbSolver {
 
 	private String processQueue() {
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Elements in queue: " + queue.size());
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Elements in queue: " + queue.size());
 		}
 
 		final Queue<String> newQueue = new LinkedList<>();
@@ -100,7 +102,7 @@ public class SkewbSolver {
 		while (!queue.isEmpty()) {
 			String state = queue.remove();
 
-			for (Orientation o : axes ) {
+			for (Orientation o : axes) {
 				for (Direction d : directions) {
 					Skewb s = new Skewb(state);
 					s.rotate(o, d);
@@ -131,6 +133,31 @@ public class SkewbSolver {
 		queue.addAll(newQueue);
 
 		return null;
+	}
+
+	private void logSolution(final Solution solution) {
+		final String startingState = solution.getStartingSkewb().toString();
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("###############");
+		}
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Solution found in " + solution.getOperations().size() + " steps. Time taken: " + solution.getTimeTaken() + "ms.");
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Starting state: " + startingState);
+		}
+		LOG.trace(solution.getOperations());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("---------------");
+			LOG.debug("Operations to solve the skewb:");
+			for (Operation o : solution.getOperations()) {
+				LOG.debug(o);
+			}
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("###############");
+		}
 	}
 
 }
