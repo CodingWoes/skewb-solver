@@ -17,34 +17,45 @@ public class App {
 
 	public static void main(String[] args) {
 
-		LOG.error("Testing an error!");
-		LOG.info("Testing info...");
-
 		final Skewb skewb = new Skewb();
 
 		LOG.debug(skewb);
+
+		solveSkewb(skewb);
 
 		skewb.rotate(Orientation.USW, Direction.CCW);
 
 		LOG.debug(skewb);
 
+		solveSkewb(skewb);
+
+		final String skewb2State = "U:Y#O#W#Y#O|S:O#G#Y#Y#R|W:B#G#O#B#R|E:W#W#B#G#W|N:B#O#G#B#R|D:G#W#R#Y#R";
+		final Skewb skewb2 = new Skewb(skewb2State);
+
+		solveSkewb(skewb2);
+
+	}
+
+	private static void solveSkewb(final Skewb skewb) {
+
+		final String startingState = skewb.toString();
+
 		final SkewbSolver solver = new SkewbSolver(skewb);
+		try {
+			final List<Operation> solution = solver.solve();
 
-		solver.solve();
-
-//		final String skewb2State = "U:Y#O#W#Y#O|S:O#G#Y#Y#R|W:B#G#O#B#R|E:W#W#B#G#W|N:B#O#G#B#R|D:G#W#R#Y#R";
-//		final Skewb skewb2 = new Skewb(skewb2State);
-//
-//		LOG.debug(skewb2);
-//
-//		final SkewbSolver solver2 = new SkewbSolver(skewb2);
-//
-//		List<Operation> operations = solver2.solve();
-//		LOG.debug("Starting state: " + skewb2State);
-//		LOG.debug(operations);
-//		for (Operation o : operations) {
-//			LOG.debug(o);
-//		}
+			if (LOG.isInfoEnabled()) {
+				LOG.info("Starting state: " + startingState);
+			}
+			LOG.debug(solution);
+			if (LOG.isInfoEnabled()) {
+				for (Operation o : solution) {
+					LOG.info(o);
+				}
+			}
+ 		} catch (IllegalArgumentException e) {
+			LOG.debug(e);
+		}
 
 	}
 }

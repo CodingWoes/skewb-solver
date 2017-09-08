@@ -38,7 +38,12 @@ public class SkewbSolver {
 
 	public List<Operation> solve() {
 		if (skewb.isSolved()) {
-			LOG.debug("Skewb already solved!");
+			LOG.warn("Skewb already solved!");
+			throw new IllegalArgumentException("Skewb already solved.");
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Beginning solve of skewb: " + skewb);
 		}
 
 		long start = System.currentTimeMillis();
@@ -58,19 +63,25 @@ public class SkewbSolver {
 			String result = processQueue();
 
 			if (result != null) {
-				LOG.debug("Found " + cache.size() + " different states.");
 				solved = true;
-				LOG.debug("Process complete. Time taken: " + (System.currentTimeMillis() - start) + "ms");
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Found " + cache.size() + " different states.");
+					LOG.debug("Process complete. Time taken: " + (System.currentTimeMillis() - start) + "ms");
+				}
 				return cache.get(result);
 			}
 
-			// TODO: this should be removed eventually
 			counter++;
-			LOG.debug("Finished pass " + counter + " (time so far: " + (System.currentTimeMillis() - start) + "ms)");
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Finished pass " + counter + " (time so far: " + (System.currentTimeMillis() - start) + "ms)");
+			}
+
+			// TODO: this should be removed eventually
 			if (counter >= 100) {
 				LOG.error("Fail safe reached, exiting solver.");
 				break;
 			}
+
 		}
 
 		return null;
@@ -79,7 +90,9 @@ public class SkewbSolver {
 
 	private String processQueue() {
 
-		LOG.debug("Elements in queue: " + queue.size());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Elements in queue: " + queue.size());
+		}
 
 		final Queue<String> newQueue = new LinkedList<>();
 
