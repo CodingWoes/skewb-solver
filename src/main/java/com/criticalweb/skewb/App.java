@@ -1,8 +1,6 @@
 package com.criticalweb.skewb;
 
-import com.criticalweb.skewb.model.Direction;
-import com.criticalweb.skewb.model.Orientation;
-import com.criticalweb.skewb.model.Skewb;
+import com.criticalweb.skewb.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +27,7 @@ public class App {
 
 		solveSkewb(skewb);
 
-		final String skewb2State = "U:Y#O#W#Y#O|S:O#G#Y#Y#R|W:B#G#O#B#R|E:W#W#B#G#W|N:B#O#G#B#R|D:G#W#R#Y#R";
+		final String skewb2State = "U:W#B#W#W#O|S:R#G#R#Y#G|W:B#G#O#B#O|E:W#R#Y#Y#Y|N:Y#R#G#G#O|D:B#O#B#W#R";
 		final Skewb skewb2 = new Skewb(skewb2State);
 
 		solveSkewb(skewb2);
@@ -42,16 +40,23 @@ public class App {
 
 		final SkewbSolver solver = new SkewbSolver(skewb);
 		try {
-			final List<Operation> solution = solver.solve();
+			final Solution solution = solver.solve();
 
 			if (LOG.isInfoEnabled()) {
+				LOG.info("###############");
+				LOG.info("Solution found in " + solution.getOperations().size() + " steps. Time taken: " + solution.getTimeTaken() + "ms.");
 				LOG.info("Starting state: " + startingState);
 			}
 			LOG.debug(solution);
 			if (LOG.isInfoEnabled()) {
-				for (Operation o : solution) {
+				LOG.info("---------------");
+				LOG.info("Operations to solve the skewb:");
+				for (Operation o : solution.getOperations()) {
 					LOG.info(o);
 				}
+			}
+			if (LOG.isInfoEnabled()) {
+				LOG.info("###############");
 			}
  		} catch (IllegalArgumentException e) {
 			LOG.debug(e);

@@ -1,8 +1,5 @@
-package com.criticalweb.skewb;
+package com.criticalweb.skewb.model;
 
-import com.criticalweb.skewb.model.Direction;
-import com.criticalweb.skewb.model.Orientation;
-import com.criticalweb.skewb.model.Skewb;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +33,7 @@ public class SkewbSolver {
 		directions.addAll(Arrays.asList(Direction.CW, Direction.CCW));
 	}
 
-	public List<Operation> solve() {
+	public Solution solve() {
 		if (skewb.isSolved()) {
 			LOG.warn("Skewb already solved!");
 			throw new IllegalArgumentException("Skewb already solved.");
@@ -64,11 +61,15 @@ public class SkewbSolver {
 
 			if (result != null) {
 				solved = true;
+				long timeTaken = System.currentTimeMillis() - start;
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Found " + cache.size() + " different states.");
-					LOG.debug("Process complete. Time taken: " + (System.currentTimeMillis() - start) + "ms");
+					LOG.debug("Process complete. Time taken: " + timeTaken + "ms");
 				}
-				return cache.get(result);
+				final Solution solution = new Solution();
+				solution.setOperations(cache.get(result));
+				solution.setTimeTaken(timeTaken);
+				return solution;
 			}
 
 			counter++;

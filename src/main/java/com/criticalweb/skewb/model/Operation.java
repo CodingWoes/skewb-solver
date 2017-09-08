@@ -1,4 +1,4 @@
-package com.criticalweb.skewb;
+package com.criticalweb.skewb.model;
 
 import com.criticalweb.skewb.model.Direction;
 import com.criticalweb.skewb.model.Orientation;
@@ -6,7 +6,7 @@ import com.criticalweb.skewb.model.Orientation;
 /**
  * Created by i840108 on 2017-09-05.
  */
-class Operation {
+public class Operation {
 
 	private Orientation axis;
 	private Direction direction;
