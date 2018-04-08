@@ -24,7 +24,6 @@ public class App {
 		skewb.rotate(Orientation.USW, Direction.CCW);
 
 		LOG.debug(skewb);
-
 		solveSkewb(skewb);
 
 		final String skewb2State = "U:W#B#W#W#O|S:R#G#R#Y#G|W:B#G#O#B#O|E:W#R#Y#Y#Y|N:Y#R#G#G#O|D:B#O#B#W#R";
