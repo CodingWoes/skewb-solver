@@ -1,6 +1,9 @@
 package com.criticalweb.skewb;
 
 import com.criticalweb.skewb.model.*;
+import com.criticalweb.skewb.solver.BruteSkewbSolver;
+import com.criticalweb.skewb.solver.SkewbSolver;
+import com.criticalweb.skewb.solver.Solution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,9 +40,9 @@ public class App {
 
 		final String startingState = skewb.toString();
 
-		final SkewbSolver solver = new SkewbSolver(skewb);
+		final SkewbSolver solver = new BruteSkewbSolver();
 		try {
-			final Solution solution = solver.solve();
+			final Solution solution = solver.solve(skewb);
 
 			if (LOG.isInfoEnabled()) {
 				LOG.info("###############");
